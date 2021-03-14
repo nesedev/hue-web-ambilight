@@ -49,10 +49,25 @@ async function selectBridge() {
     return;
   }
 
-  bridgeSelect.remove(0);
 
-  availableBridges.forEach(async bridge => {
-    const bridgeConfig = await requestWarpper({url: 'http://' + bridge.internalipaddress + '/api/config'}).catch(err => console.error(err));
+  availableBridges.forEach(async (bridge, i) => {
+    const bridgeConfig = await requestWarpper({url: 'https://' + bridge.internalipaddress + '/api/config'}).catch(err => console.error(err));
+    
+    // if https not available show info message
+    if (bridgeConfig == null) {
+      const httpsError = document.getElementById('https-error');
+      const httpsErrorText = document.getElementById('https-error-text');
+      const httpsErrorLink = document.getElementById('https-error-link');
+
+      httpsError.hidden = false;
+      httpsErrorText.textContent = 'In order to establish a secure connection to your Hue Bridge you need to add an exception on the following page';
+      httpsErrorLink.href = 'https://' + bridge.internalipaddress + '/api';
+      httpsErrorLink.textContent = 'https://' + bridge.internalipaddress + '/api';
+
+      return;
+    }
+
+    if (i == 0) bridgeSelect.remove(0);
 
     const option = document.createElement("option");
     option.text = bridgeConfig.name;
@@ -70,22 +85,6 @@ async function connectBridge() {
   connectedBridge.ip = bridgeSelect.value;
 
   console.log(connectedBridge);
-
-  // test https
-  const httpsResponse = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api'}).catch(err => console.error(err));
-  console.log(httpsResponse);
-
-  // if https not available show info message
-  if (httpsResponse == null) {
-    const connectBridgeError = document.getElementById('connect-bridge-error');
-    const connectBridgeErrorText = document.getElementById('connect-bridge-error-text');
-    const connectBridgeErrorLink = document.getElementById('connect-bridge-error-link');
-
-    connectBridgeError.hidden = false;
-    connectBridgeErrorText.textContent = 'In order to establish a secure connection to your hue bridge you need to add an exception on the following page';
-    connectBridgeErrorLink.href = 'https://' + connectedBridge.ip + '/api';
-    connectBridgeErrorLink.textContent = 'https://' + connectedBridge.ip + '/api';
-  }
 }
 
 async function buttonBridge() {

@@ -21,6 +21,7 @@
       </div>
   
       <div id="select-bridge-wrapper" hidden>
+        <span class="info" id="https-error" hidden><span id="https-error-text"></span><br /><br /><a href="#" target="_blank" onclick="selectBridge()" id="https-error-link"></a></span>
         <h2>Select a bridge to use</h2>
         <div class="input-row">
           <select class="input" id="bridge-select"></select>
@@ -31,7 +32,6 @@
       </div>
   
       <div id="connect-bridge-wrapper" hidden>
-        <span class="info" id="connect-bridge-error" hidden><span id="connect-bridge-error-text"></span><br /><br /><a href="#" target="_blank" onclick="selectBridge()" id="connect-bridge-error-link"></a></span>
         <h2>Enter a name for this connection</h2>
         <div class="input-row">
           <input type="text" class="input" id="device-name" placeholder="e.g. Laptop" />
