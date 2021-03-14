@@ -1,5 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0F0F0F;
+  font-size: 20px;
+}
+
 body {
-  background: #0D1117;
+  font-family: "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   color: #C9D1D9;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.input, .button {
+  font-family: inherit;
+  font-size: inherit;
+  background: #1F1F1F;
+  color: inherit;
+  border: 0;
+  padding: .5em;
+  border-radius: .25em;
+  transition: .1s;
+}
+
+.input:hover, .button:hover {
+  background: #2F2F2F;
+}
+
+.input {
+  min-width: 10em;
+}
+
+button {
+  cursor: pointer;
+}
+
+button.button:active {
+  background: #272727;
+}
+
+h1, h2 {
+  margin: 1rem 0;
+}
+
+h2 {
+  font-weight: normal;
+}
+
+.flex-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.error {
+  color: #FF7F7F;
+}
+
+.info {
+  color: #BFDFFF;
+}
+
+/*
+0F -
+1F
+2F
+3F -
+4F
+5F
+6F
+7F -
+8F
+9F
+AF
+BF -
+CF
+DF
+EF
+FF - 
+*/
+
+.error, .info {
+  display: inline-block;
+  width: 75%;
+}
+
+.error a, .info a {
+  color: inherit;
+}
+
+.input-row {
+  display: flex;
+  justify-content: center;
+  column-gap: .5em;
+  margin: 1rem;
+}
+
+#setup-wrapper {
+  min-width: 50%;
+  text-align: center;
+}
+
+[hidden] {
+  display: none;
 }

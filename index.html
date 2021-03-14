@@ -3,11 +3,58 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hue Ambilight</title>
+    <title>HWA</title>
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
-    <h1>Hello World :)</h1>
+    <h1>Welcome to HWA</h1>
+
+    <noscript>This website requires Javascript to work</noscript>
+
+    <div id="setup-wrapper" hidden>
+
+      <div id="setup-bridge-wrapper" hidden>
+        <h2>To use HWA you need to connect to a Hue Bridge</h2>
+        <div class="input-row">
+          <button type="button" class="button" onclick="selectBridge()">Set up Bridge</button>
+        </div>
+      </div>
+  
+      <div id="select-bridge-wrapper" hidden>
+        <h2>Select a bridge to use</h2>
+        <div class="input-row">
+          <select class="input" id="bridge-select"></select>
+          <button type="button" class="button" onclick="connectBridge()">Select</button>
+          <button type="button" class="button" onclick="selectBridge()">Reload</button>
+        </div>
+        <span class="error" id="no-bridge-error" hidden>No Bridges were found in your Network - <a href="#" onclick="selectBridge()">Try again</a></span>
+      </div>
+  
+      <div id="connect-bridge-wrapper" hidden>
+        <span class="info" id="connect-bridge-error" hidden><span id="connect-bridge-error-text"></span><br /><br /><a href="#" target="_blank" onclick="selectBridge()" id="connect-bridge-error-link"></a></span>
+        <h2>Enter a name for this connection</h2>
+        <div class="input-row">
+          <input type="text" class="input" id="device-name" placeholder="e.g. Laptop" />
+          <button type="button" class="button" onclick="buttonBridge()">Connect</button>
+        </div>
+      </div>
+  
+      <div id="button-bridge-wrapper" hidden>
+        <h2>Press the button on your Bridge to connect</h2>
+        <span class="info">Status: <span id="button-bridge-status">...</span></span>
+        <div class="input-row">
+          <button type="button" class="button" onclick="checkButton()">I pressed it</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="welcome-wrapper" hidden>
+
+      <h2>You are connected to Hue Bridge "<span id="welcome-bridge-name"></span>"</h2>
+
+    </div>
+    
     <script src="main.js"></script>
   </body>
 </html>
