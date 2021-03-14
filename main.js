@@ -17,13 +17,19 @@ try {
 // init
 (function() {
   if (connectedBridge.ip == null || connectedBridge.user == null) {
-    connectedBridge = {};
-    setupWrapper.hidden = false;
-    setupBridgeWrapper.hidden = false;
+    setupBridge();
   } else {
     welcome();
   }
 })();
+
+function setupBridge() {
+  localStorage.removeItem('bridgeData');
+  connectedBridge = {};
+  welcomeWrapper.hidden = true;
+  setupWrapper.hidden = false;
+  setupBridgeWrapper.hidden = false;
+}
 
 async function selectBridge() {
   setupBridgeWrapper.hidden = true;
@@ -61,8 +67,8 @@ async function selectBridge() {
 
       httpsError.hidden = false;
       httpsErrorText.textContent = 'In order to establish a secure connection to your Hue Bridge you need to add an exception on the following page';
-      httpsErrorLink.href = 'https://' + bridge.internalipaddress + '/api';
-      httpsErrorLink.textContent = 'https://' + bridge.internalipaddress + '/api';
+      httpsErrorLink.href = 'https://' + bridge.internalipaddress;
+      httpsErrorLink.textContent = 'https://' + bridge.internalipaddress;
 
       return;
     }
@@ -95,31 +101,74 @@ async function buttonBridge() {
   const loginRequest = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api', method: 'POST', body: {'devicetype':'hue-web-ambilight#' + deviceName}}).catch(err => console.error(err));
   console.log(loginRequest);
 
-  document.getElementById('button-bridge-status').textContent = 'waiting...';
+  checkButton(1);
 }
 
-async function checkButton() {
+let checkButtonReset = false;
+let checkButtonTimeout;
+async function checkButton(delay) {
+  document.getElementById('button-bridge-status').textContent = 'Waiting, checking again in ' + delay + ' seconds...';
+
   const deviceName = document.getElementById('device-name').value;
   const loginRequest = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api', method: 'POST', body: {'devicetype':'hue-web-ambilight#' + deviceName}}).catch(err => console.error(err));
   console.log(loginRequest);
 
   if (loginRequest[0].success) {
+    clearTimeout(checkButtonTimeout);
+
     connectedBridge.user = loginRequest[0].success.username;
     console.log(connectedBridge);
     localStorage.setItem('bridgeData', JSON.stringify(connectedBridge));
+
     buttonBridgeWrapper.hidden = true;
     setupWrapper.hidden = true;
+    
     welcome();
   } else if (loginRequest[0].error) {
+    if (checkButtonReset) {
+      clearTimeout(checkButtonTimeout);
+    }
 
+    if (!delay) delay = 1;
+
+    checkButtonTimeout = setTimeout(function() {
+      checkButton(delay+1);
+    }, delay*1000);
   }
 }
 
 async function welcome() {
   welcomeWrapper.hidden = false;
 
-  const bridgeConfig = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/config'}).catch(err => console.error(err));
-  document.getElementById('welcome-bridge-name').textContent = bridgeConfig.name;
+  // check connection
+  const publicConfig = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/config'}).catch(err => console.error(err));
+
+  console.log(publicConfig)
+
+  const welcomeError = document.getElementById('welcome-error');
+
+  if (!publicConfig) {
+    console.error('could not connect to bridge');
+    welcomeError.textContent = 'Could not reach bridge at ' + connectedBridge.ip;
+    welcomeError.hidden = false;
+    // TODO: check if ssl error, show warning
+    // setupBridge();
+  }
+  
+  document.getElementById('welcome-bridge-name').textContent = publicConfig.name;
+
+  // check user
+  const privateConfig = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/' + connectedBridge.user}).catch(err => console.error(err));
+
+  if (!privateConfig.config) {
+    console.error('could not authenticate user on bridge');
+    welcomeError.textContent = 'User authentication failed';
+    welcomeError.hidden = false;
+  }
+}
+
+function disconnect() {
+  setupBridge();
 }
 
 async function requestWarpper(options) {
@@ -134,23 +183,3 @@ async function requestWarpper(options) {
     resolve(response.json());
   });
 }
-
-// function get(url, data, format) {
-//   return new Promise(function (resolve, reject) {
-//     var req = new XMLHttpRequest();
-//     req.open('GET', url);
-//     req.responseType = format || 'json';
-//     req.onload = function() {
-//       // It could be a successful response but not an OK one (e.g., 3xx, 4xx).
-//       if (req.status === 200) {
-//         resolve(req.response);
-//       } else {
-//         reject(Error(req.statusText));
-//       }
-//     };
-//     req.onerror = function() {
-//       reject(Error('Network Error'));
-//     };
-//     req.send(data);
-//   });
-// }

@@ -18,6 +18,11 @@ body {
   justify-content: center;
 }
 
+.main-wrapper {
+  text-align: center;
+  width: 100%;
+}
+
 .input, .button {
   font-family: inherit;
   font-size: inherit;
@@ -47,6 +52,7 @@ button.button:active {
 
 h1, h2 {
   margin: 1rem 0;
+  line-height: 1;
 }
 
 h2 {
@@ -65,25 +71,6 @@ h2 {
 .info {
   color: #BFDFFF;
 }
-
-/*
-0F -
-1F
-2F
-3F -
-4F
-5F
-6F
-7F -
-8F
-9F
-AF
-BF -
-CF
-DF
-EF
-FF - 
-*/
 
 .error, .info {
   display: inline-block;
