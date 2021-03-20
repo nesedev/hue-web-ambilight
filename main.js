@@ -43,7 +43,7 @@ async function selectBridge() {
   option.value = -1;
   option.selected = true;
   option.disabled = true;
-  bridgeSelect.add(option)
+  bridgeSelect.add(option);
 
   const availableBridges = await requestWarpper({url: 'https://discovery.meethue.com'}).catch(err => console.error(err));
 
@@ -54,7 +54,6 @@ async function selectBridge() {
     noBridgeError.hidden = false;
     return;
   }
-
 
   availableBridges.forEach(async (bridge, i) => {
     const bridgeConfig = await requestWarpper({url: 'https://' + bridge.internalipaddress + '/api/config'}).catch(err => console.error(err));
@@ -165,6 +164,43 @@ async function welcome() {
     welcomeError.textContent = 'User authentication failed';
     welcomeError.hidden = false;
   }
+
+  const lightSelect = document.getElementById('light-select');
+  lightSelect.innerHTML = '';
+
+  const option = document.createElement("option");
+  option.text = 'No bridge found';
+  option.value = -1;
+  option.selected = true;
+  option.disabled = true;
+  lightSelect.add(option);
+
+  const availableLights = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/' + connectedBridge.user + '/lights'}).catch(err => console.error(err));
+
+  console.log(availableLights);
+
+  let lampi = 0;
+  for(let key in availableLights) {
+    if (lampi == 0) {
+      lightSelect.remove(0);
+      lampi++;
+    } 
+
+    const option = document.createElement("option");
+    option.text = availableLights[key].name;
+    option.value = key;
+    lightSelect.add(option)
+  }
+}
+
+async function turnLightOn() {
+  const lightSelect = document.getElementById('light-select');
+  const loginRequest = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/' + connectedBridge.user + '/lights/' + lightSelect.value + '/state', method: 'PUT', body: {'on':true}}).catch(err => console.error(err));
+}
+
+async function turnLightOff() {
+  const lightSelect = document.getElementById('light-select');
+  const loginRequest = await requestWarpper({url: 'https://' + connectedBridge.ip + '/api/' + connectedBridge.user + '/lights/' + lightSelect.value + '/state', method: 'PUT', body: {'on':false}}).catch(err => console.error(err));
 }
 
 function disconnect() {
